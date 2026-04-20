@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Staff Reports</title>
+
+<style>
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#e0f2fe,#f8fafc,#e2e8f0);
+padding:40px;
+}
+
+/* CONTAINER */
+
+.container{
+background:white;
+padding:30px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+h2{
+color:#1e3a8a;
+margin-bottom:20px;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:14px;
+text-align:center;
+border-bottom:1px solid #e2e8f0;
+}
+
+th{
+background:#f8fafc;
+color:#1e3a8a;
+}
+
+tr:hover{
+background:#f1f5f9;
+}
+
+/* BUTTON */
+
+.btn{
+padding:8px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:13px;
+font-weight:600;
+}
+
+.accept{
+background:#22c55e;
+color:white;
+}
+
+.process{
+background:#3b82f6;
+color:white;
+}
+
+/* IMAGE */
+
+.preview{
+width:70px;
+border-radius:8px;
+cursor:pointer;
+transition:.2s;
+}
+
+.preview:hover{
+transform:scale(1.05);
+}
+
+/* POPUP MODAL */
+
+.modal{
+display:none;
+position:fixed;
+z-index:1000;
+padding-top:60px;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+}
+
+.modal-content{
+display:block;
+margin:auto;
+max-width:80%;
+border-radius:10px;
+}
+
+.close{
+position:absolute;
+top:20px;
+right:35px;
+color:white;
+font-size:35px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Staff Reports</h2>
+
+<table>
+
+<tr>
+<th>Report ID</th>
+<th>Staff Name</th>
+<th>Title</th>
+<th>Image</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+{% for r in reports %}
+
+<tr>
+
+<td>{{ r.ReportID }}</td>
+
+<td>{{ r.FullName }}</td>
+
+<td>{{ r.Title }}</td>
+
+<td>
+
+{% if r.ImagePath %}
+
+<img
+src="{{ url_for('static', filename='uploads/' + r.ImagePath) }}"
+class="preview"
+onclick="showImage(this.src)"
+>
+
+{% else %}
+
+No Image
+
+{% endif %}
+
+</td>
+
+<td>{{ r.Status }}</td>
+
+<td>
+
+<a href="/approve/{{ r.ReportID }}">
+<button class="btn accept">Accept</button>
+</a>
+
+<a href="/process/{{ r.ReportID }}">
+<button class="btn process">Process</button>
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<!-- IMAGE POPUP -->
+
+<div id="imgModal" class="modal">
+
+<span class="close" onclick="closeImage()">&times;</span>
+
+<img class="modal-content" id="modalImg">
+
+</div>
+
+
+<script>
+
+function showImage(src){
+
+document.getElementById("imgModal").style.display="block";
+
+document.getElementById("modalImg").src=src;
+
+}
+
+function closeImage(){
+
+document.getElementById("imgModal").style.display="none";
+
+}
+
+</script>
+
+</body>
+</html>

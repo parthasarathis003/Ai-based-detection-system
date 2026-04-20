@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login</title>
+<style>
+body{
+    background:#d1d5db; /* 70% grey */
+    color:#1e293b; /* dark grey text for readability */
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    font-family:Segoe UI, sans-serif;
+}
+
+.box{
+    background:#ffffff; /* 20% white */
+    padding:40px;
+    border-radius:15px;
+    text-align:center;
+    width:350px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    color:#1e293b;
+}
+
+.input-box{
+    position:relative;
+}
+
+input{
+    width:100%;
+    padding:12px 45px 12px 12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #9ca3af; /* subtle grey border */
+    background:#f9fafb;
+    color:#1e293b;
+    box-sizing:border-box;
+    font-size:14px;
+}
+
+input::placeholder{
+    color:#6b7280; /* medium grey placeholder */
+}
+
+.toggle{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:14px;
+    color:#2563eb; /* 10% blue accent */
+    user-select:none;
+    font-weight:500;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#2563eb; /* blue accent */
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:background 0.3s ease;
+}
+
+button:hover{
+    background:#1d4ed8; /* darker blue on hover */
+}
+
+.flash{
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:6px;
+    font-size:14px;
+    animation: fadeOut 5s forwards;
+}
+
+.flash.success{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.flash.error{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+@keyframes fadeOut{
+    0%{opacity:1;}
+    80%{opacity:1;}
+    100%{opacity:0; display:none;}
+}
+
+/* Shake animation for error feedback */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+</style>
+</head>
+
+<body>
+<div class="box">
+    <h2>Admin Login</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        {% if category == "admin_error" or category == "admin_success" %}
+          <div class="flash 
+            {% if "error" in category %}error
+            {% elif "success" in category %}success
+            {% endif %}">
+            {{ message }}
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endwith %}
+
+    <form action="/admin-login" method="post">
+        <input type="email" name="email" placeholder="Admin Email" required>
+
+        <div class="input-box">
+            <input type="password" id="password" name="password" placeholder="Admin Password" required>
+            <span class="toggle" onclick="togglePassword()">👁</span>
+        </div>
+
+        <button type="submit">ADMIN LOGIN</button>
+    </form>
+</div>
+
+<script>
+function togglePassword(){
+    const pass = document.getElementById("password");
+    const toggle = document.querySelector(".toggle");
+
+    if(pass.type === "text"){
+        pass.type = "password";
+        toggle.textContent = "👁";
+    }else{
+        pass.type = "text";
+        toggle.textContent = "—";
+    }
+}
+</script>
+
+<script>
+let msg = document.querySelector(".flash");
+
+if(msg){
+    let type = msg.className;
+    if(type.includes("error")){
+        let box = document.querySelector(".box");
+        box.style.animation = "shake 0.4s";
+    }
+}
+</script>
+
+</body>
+</html>

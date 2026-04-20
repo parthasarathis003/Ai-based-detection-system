@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Missing Person System - Register</title>
+
+<style>
+
+/* GLOBAL */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+min-height:100vh;
+background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+/* BACKGROUND GRID */
+
+body::before{
+content:"";
+position:absolute;
+width:200%;
+height:200%;
+background-image:
+linear-gradient(rgba(59,130,246,0.08) 1px, transparent 1px),
+linear-gradient(90deg, rgba(59,130,246,0.08) 1px, transparent 1px);
+background-size:40px 40px;
+animation:moveGrid 20s linear infinite;
+}
+
+@keyframes moveGrid{
+from{transform:translate(0,0);}
+to{transform:translate(-40px,-40px);}
+}
+
+/* REGISTER BOX */
+
+.box{
+position:relative;
+z-index:2;
+width:400px;
+padding:35px;
+border-radius:16px;
+background:rgba(15,23,42,0.75);
+backdrop-filter:blur(12px);
+box-shadow:0 0 40px rgba(59,130,246,0.25);
+border:1px solid rgba(59,130,246,0.3);
+text-align:center;
+}
+
+.box h2{
+color:#60a5fa;
+margin-bottom:6px;
+}
+
+.subtitle{
+color:#cbd5f5;
+font-size:13px;
+margin-bottom:25px;
+}
+
+.box input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:8px;
+border:1px solid rgba(59,130,246,0.3);
+background:rgba(2,6,23,0.7);
+color:white;
+outline:none;
+}
+
+.box input::placeholder{
+color:#94a3b8;
+}
+
+/* PASSWORD */
+
+.password-box{
+position:relative;
+}
+
+.password-box input{
+padding-right:45px;
+}
+
+.toggle-icon{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:18px;
+color:#93c5fd;
+}
+
+/* BUTTON */
+
+.box button{
+width:100%;
+padding:12px;
+margin-top:15px;
+border:none;
+border-radius:8px;
+font-weight:bold;
+color:white;
+background:linear-gradient(90deg,#16a34a,#22c55e);
+cursor:pointer;
+}
+
+.box button:hover{
+box-shadow:0 0 20px rgba(34,197,94,0.6);
+}
+
+.box p{
+margin-top:18px;
+color:#cbd5f5;
+font-size:13px;
+}
+
+.box a{
+color:#38bdf8;
+text-decoration:none;
+font-weight:bold;
+}
+
+.ai-tag{
+font-size:11px;
+color:#93c5fd;
+margin-top:12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>AI Missing Person System</h2>
+<div class="subtitle">Create Secure AI Surveillance Account</div>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div style="background:#0f172a;padding:10px;margin-bottom:15px;border-radius:8px;color:#22c55e;font-size:13px;">
+{{ messages[0] }}
+</div>
+{% endif %}
+{% endwith %}
+
+<form action="/register" method="post">
+
+<input type="text"
+name="name"
+placeholder="Full Name"
+pattern="[A-Za-z ]+"
+title="Name should contain only letters"
+required>
+
+<!-- TOKEN -->
+
+<input type="text"
+id="token"
+name="token"
+placeholder="Enter Token Number (example: NEC0923009)"
+onkeyup="autoFillDetails()"
+required>
+
+<!-- EMAIL AUTO -->
+
+<input type="email"
+id="email"
+name="email"
+placeholder="Email auto generated"
+readonly
+required>
+
+<!-- DEPARTMENT AUTO -->
+
+<input type="text"
+id="department"
+name="department"
+placeholder="Department auto detected"
+readonly
+required>
+
+<input type="hidden" name="role" value="Student">
+
+<!-- PASSWORD -->
+
+<div class="password-box">
+
+<input type="password"
+id="password"
+name="password"
+placeholder="Password"
+required>
+
+<span class="toggle-icon" onclick="togglePassword()">👁️</span>
+
+</div>
+
+<button type="submit">CREATE ACCOUNT</button>
+
+<p>Already have an account? <a href="/user-login">Login</a></p>
+
+</form>
+
+<div class="ai-tag">AI Powered Registration System</div>
+
+</div>
+
+<script>
+
+/* PASSWORD SHOW / HIDE */
+
+function togglePassword(){
+
+const pwd=document.getElementById("password");
+
+if(pwd.type==="password"){
+pwd.type="text";
+}else{
+pwd.type="password";
+}
+
+}
+
+/* AUTO EMAIL + DEPARTMENT */
+
+function autoFillDetails(){
+
+let tokenInput=document.getElementById("token");
+let token=tokenInput.value;
+
+tokenInput.value=token;
+
+let emailField=document.getElementById("email");
+let deptField=document.getElementById("department");
+
+/* EMAIL */
+
+if(token.length>0){
+emailField.value=token+"@nttf.co.in";
+}
+
+/* DEPARTMENT */
+
+if(token.length>=5){
+
+let deptCode=token.substring(3,5);
+
+deptField.value="CP"+deptCode;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

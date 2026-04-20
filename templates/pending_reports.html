@@ -1,0 +1,143 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<title>Pending Reports</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f6f9;
+margin:0;
+}
+
+.header{
+background:#f39c12;
+color:white;
+padding:15px;
+font-size:22px;
+text-align:center;
+}
+
+.container{
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+th{
+background:#f39c12;
+color:white;
+padding:12px;
+}
+
+td{
+padding:10px;
+text-align:center;
+border-bottom:1px solid #ddd;
+}
+
+img{
+width:80px;
+height:80px;
+object-fit:cover;
+border-radius:5px;
+}
+
+.role-student{
+color:#2980b9;
+font-weight:bold;
+}
+
+.role-staff{
+color:#8e44ad;
+font-weight:bold;
+}
+
+.no-data{
+text-align:center;
+padding:30px;
+font-size:18px;
+color:#888;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Pending Reports
+</div>
+
+<div class="container">
+
+{% if reports %}
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Role</th>
+<th>Title</th>
+<th>Location</th>
+<th>Status</th>
+<th>Image</th>
+</tr>
+
+{% for report in reports %}
+
+<tr>
+
+<td>{{ report[0] }}</td>
+
+<td>{{ report[1] }}</td>
+
+<td>
+{% if report[2] == "Student" %}
+<span class="role-student">Student</span>
+{% else %}
+<span class="role-staff">Staff</span>
+{% endif %}
+</td>
+
+<td>{{ report[3] }}</td>
+
+<td>{{ report[4] }}</td>
+
+<td>{{ report[5] }}</td>
+
+<td>
+
+{% if report[6] %}
+<img src="{{ url_for('static', filename='uploads/' + report[6]) }}">
+{% else %}
+No Image
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% else %}
+
+<div class="no-data">
+No Pending Reports Found
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

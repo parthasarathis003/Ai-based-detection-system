@@ -1,0 +1,367 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<title>Student Dashboard</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* BODY */
+
+body{
+background:radial-gradient(circle at top,#0f172a,#020617);
+color:white;
+display:flex;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:220px;
+background:#020617;
+padding:25px 15px;
+border-right:1px solid #1e293b;
+}
+
+.logo{
+font-size:20px;
+font-weight:bold;
+color:#60a5fa;
+margin-bottom:40px;
+text-align:center;
+}
+
+.sidebar a{
+display:block;
+text-decoration:none;
+color:#cbd5f5;
+padding:12px;
+border-radius:8px;
+margin-bottom:10px;
+transition:0.3s;
+cursor:pointer;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+color:white;
+}
+
+/* MAIN AREA */
+
+.main{
+flex:1;
+padding:30px;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.header-left{
+font-size:22px;
+font-weight:bold;
+color:#60a5fa;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.username{
+color:#cbd5f5;
+font-size:15px;
+}
+.flash{
+background:#16a34a;
+padding:10px;
+border-radius:8px;
+margin-bottom:15px;
+transition:0.5s;
+}
+
+.logout{
+text-decoration:none;
+background:#ef4444;
+padding:8px 16px;
+border-radius:8px;
+color:white;
+font-size:14px;
+}
+
+/* CARD */
+
+.card{
+background:#0f172a;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+box-shadow:0 0 12px rgba(59,130,246,0.2);
+}
+
+/* FORM GRID */
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+textarea{
+grid-column:1/3;
+}
+
+/* INPUT */
+
+input,textarea{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #334155;
+background:#020617;
+color:white;
+outline:none;
+}
+
+input:focus,textarea:focus{
+border-color:#3b82f6;
+}
+
+/* FILE */
+
+.file-box{
+grid-column:1/3;
+}
+
+/* BUTTON */
+
+button{
+margin-top:10px;
+padding:12px 20px;
+background:linear-gradient(90deg,#16a34a,#22c55e);
+border:none;
+border-radius:8px;
+color:white;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 0 10px rgba(34,197,94,0.6);
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th,td{
+padding:14px;
+text-align:center;
+border-bottom:1px solid #1e293b;
+}
+
+th{
+color:#60a5fa;
+}
+
+tr:hover{
+background:#020617;
+}
+
+/* STATUS */
+
+.pending{color:#fbbf24;font-weight:bold;}
+.approved{color:#22c55e;font-weight:bold;}
+.rejected{color:#ef4444;font-weight:bold;}
+
+/* FLASH */
+
+.flash{
+background:#16a34a;
+padding:10px;
+border-radius:8px;
+margin-bottom:15px;
+}
+
+/* HIDE SECTIONS */
+
+.section{
+display:none;
+}
+
+.section.active{
+display:block;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+AI Missing System
+</div>
+
+<a onclick="showSection('dashboard')">Dashboard</a>
+<a onclick="showSection('reports')">My Reports</a>
+
+</div>
+
+
+<!-- MAIN CONTENT -->
+
+<div class="main">
+
+<div class="header">
+
+<div class="header-left">
+Student Dashboard
+</div>
+
+<div class="header-right">
+<div class="username">
+👤 {{ username }}
+</div>
+
+<a class="logout" href="/logout">Logout</a>
+</div>
+
+</div>
+
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="flash">
+{{ messages[0] }}
+</div>
+{% endif %}
+{% endwith %}
+
+
+<!-- DASHBOARD SECTION -->
+
+<div id="dashboard" class="section active">
+
+<div class="card">
+
+<h3>Submit Missing Person / Object Report</h3>
+
+<form method="POST" action="/submit-report" enctype="multipart/form-data">
+
+<div class="form-grid">
+
+<input type="text" name="title" placeholder="Report Title" required>
+
+<input type="text" name="location" placeholder="Location" required>
+
+<textarea name="description" placeholder="Description" required></textarea>
+
+<div class="file-box">
+<input type="file" name="image" accept="image/*" required>
+</div>
+
+</div>
+
+<button type="submit">Submit Report</button>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- REPORT SECTION -->
+
+<div id="reports" class="section">
+
+<div class="card">
+
+<h3>My Reports</h3>
+
+<table>
+
+<tr>
+<th>Report ID</th>
+<th>Title</th>
+<th>Status</th>
+</tr>
+
+{% for r in reports %}
+
+<tr>
+<td>{{ r.ReportID }}</td>
+<td>{{ r.Title }}</td>
+<td class="{{ r.Status|lower }}">{{ r.Status }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function showSection(section){
+
+document.getElementById("dashboard").classList.remove("active");
+document.getElementById("reports").classList.remove("active");
+
+document.getElementById(section).classList.add("active");
+
+}
+
+</script>
+<script>
+
+// section switch
+function showSection(section){
+    document.getElementById("dashboard").classList.remove("active");
+    document.getElementById("reports").classList.remove("active");
+    document.getElementById(section).classList.add("active");
+}
+
+// 🔥 AUTO HIDE FLASH MESSAGE
+setTimeout(function(){
+    let flash = document.querySelector(".flash");
+    if(flash){
+        flash.style.opacity = "0";
+        flash.style.transition = "0.5s";
+        setTimeout(() => flash.remove(), 500);
+    }
+}, 5000);
+
+</script>
+
+</body>
+</html>

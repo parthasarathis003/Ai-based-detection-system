@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Missing Person System - Register</title>
+
+<style>
+
+/* GLOBAL */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter','Segoe UI',sans-serif;
+}
+
+body{
+min-height:100vh;
+
+background: linear-gradient(135deg,#e0f2fe,#f0f9ff,#e2e8f0);
+
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* SOFT GRID BACKGROUND */
+
+body::before{
+
+content:"";
+
+position:absolute;
+
+width:200%;
+
+height:200%;
+
+background-image:
+
+linear-gradient(rgba(37,99,235,0.08) 1px, transparent 1px),
+
+linear-gradient(90deg, rgba(37,99,235,0.08) 1px, transparent 1px);
+
+background-size:45px 45px;
+
+animation:moveGrid 18s linear infinite;
+
+}
+
+@keyframes moveGrid{
+
+from{transform:translate(0,0);}
+
+to{transform:translate(-45px,-45px);}
+
+}
+
+/* CARD */
+
+.box{
+
+position:relative;
+
+z-index:2;
+
+width:420px;
+
+padding:40px;
+
+border-radius:18px;
+
+background:rgba(255,255,255,0.75);
+
+backdrop-filter:blur(14px);
+
+border:1px solid rgba(37,99,235,0.15);
+
+box-shadow:
+
+0 15px 35px rgba(37,99,235,0.15),
+
+0 5px 15px rgba(0,0,0,0.05);
+
+text-align:center;
+
+}
+
+/* TITLE */
+
+.box h2{
+
+color:#1e3a8a;
+
+margin-bottom:5px;
+
+font-weight:600;
+
+}
+
+.subtitle{
+
+color:#64748b;
+
+font-size:14px;
+
+margin-bottom:25px;
+
+}
+
+/* INPUT */
+
+.box input{
+
+width:100%;
+
+padding:13px;
+
+margin:10px 0;
+
+border-radius:10px;
+
+border:1px solid #cbd5e1;
+
+background:#f8fafc;
+
+font-size:14px;
+
+transition:0.25s;
+
+}
+
+.box input:focus{
+
+border-color:#2563eb;
+
+background:white;
+
+box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+
+outline:none;
+
+}
+
+/* PASSWORD */
+
+.password-box{
+
+position:relative;
+
+}
+
+.password-box input{
+
+padding-right:45px;
+
+}
+
+.toggle-icon{
+
+position:absolute;
+
+right:14px;
+
+top:50%;
+
+transform:translateY(-50%);
+
+cursor:pointer;
+
+font-size:17px;
+
+color:#2563eb;
+
+}
+
+/* BUTTON */
+
+.box button{
+
+width:100%;
+
+padding:13px;
+
+margin-top:18px;
+
+border:none;
+
+border-radius:10px;
+
+font-weight:600;
+
+letter-spacing:.5px;
+
+color:white;
+
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+cursor:pointer;
+
+transition:0.25s;
+
+}
+
+.box button:hover{
+
+transform:translateY(-1px);
+
+box-shadow:0 8px 20px rgba(37,99,235,0.35);
+
+}
+
+/* LINKS */
+
+.box p{
+
+margin-top:20px;
+
+color:#475569;
+
+font-size:14px;
+
+}
+
+.box a{
+
+color:#2563eb;
+
+text-decoration:none;
+
+font-weight:600;
+
+}
+
+.box a:hover{
+
+text-decoration:underline;
+
+}
+
+/* ALERT */
+
+.alert{
+
+background:#ecfeff;
+
+border:1px solid #67e8f9;
+
+padding:12px;
+
+margin-bottom:18px;
+
+border-radius:10px;
+
+color:#0f766e;
+
+font-size:14px;
+
+text-align:left;
+
+}
+
+/* AI TAG */
+
+.ai-tag{
+
+font-size:12px;
+
+color:#64748b;
+
+margin-top:14px;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:450px){
+
+.box{
+
+width:90%;
+
+padding:30px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>AI Missing Person System</h2>
+
+<div class="subtitle">
+
+Create Secure Account
+
+</div>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+<div class="alert">
+
+{{ messages[0] }}
+
+</div>
+
+{% endif %}
+{% endwith %}
+
+<form action="/register" method="post">
+
+<input
+type="text"
+name="name"
+placeholder="Full Name"
+pattern="[A-Za-z ]+"
+title="Name should contain only letters"
+required>
+
+<input
+type="text"
+id="token"
+name="token"
+placeholder="Token Number (ex: NEC0923009)"
+onkeyup="autoFillDetails()"
+required>
+
+<input
+type="email"
+id="email"
+name="email"
+placeholder="Email auto generated"
+readonly
+required>
+
+<input
+type="text"
+id="department"
+name="department"
+placeholder="Department auto detected"
+readonly
+required>
+
+<input type="hidden" name="role" value="Student">
+
+<div class="password-box">
+
+<input
+type="password"
+id="password"
+name="password"
+placeholder="Password"
+required>
+
+
+
+</div>
+
+<button type="submit">
+
+Create Account
+
+</button>
+
+<p>
+
+Already have an account?
+
+<a href="/user-login">
+
+Login
+
+</a>
+
+</p>
+
+</form>
+
+<div class="ai-tag">
+
+AI Powered Registration
+
+</div>
+
+</div>
+
+<script>
+
+function togglePassword(){
+
+let pwd=document.getElementById("password");
+
+pwd.type=pwd.type==="password"?"text":"password";
+
+}
+
+function autoFillDetails(){
+
+let token=document.getElementById("token").value;
+
+document.getElementById("email").value=token?token+"@nttf.co.in":"";
+
+if(token.length>=5){
+
+let deptCode=token.substring(3,5);
+
+document.getElementById("department").value="CP"+deptCode;
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>

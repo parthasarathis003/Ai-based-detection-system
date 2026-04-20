@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family:Segoe UI, sans-serif;
+    background:#d1d5db; /* 70% grey */
+    color:#1e293b; /* dark grey text for readability */
+}
+
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    padding:20px 40px;
+    background:#ffffff; /* 20% white */
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    color:#1e293b;
+}
+
+.header h2{
+    margin:0;
+    font-weight:600;
+}
+
+/* GLASS PANELS */
+.glass{
+    background:#ffffff; /* 20% white */
+    border-radius:20px;
+    padding:20px;
+    margin:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    color:#1e293b;
+}
+
+/* STATS */
+.stats{
+    display:flex;
+    gap:20px;
+}
+
+.stat-box{
+    flex:1;
+    text-align:center;
+    font-size:18px;
+    font-weight:500;
+    color:#1e293b;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+    color:#1e293b;
+}
+
+th, td{
+    padding:12px;
+    text-align:center;
+    border-bottom:1px solid #e5e7eb;
+}
+
+th{
+    background:#f9fafb; /* light grey header */
+    font-weight:600;
+}
+
+/* IMAGES */
+img{
+    width:60px;
+    border-radius:8px;
+}
+
+/* BUTTONS */
+button{
+    padding:6px 12px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:500;
+}
+
+.approve{background:#16a34a;color:white;}
+.reject{background:#dc2626;color:white;}
+.logout{color:#dc2626;font-weight:600;text-decoration:none;}
+
+.header button{
+    background:#2563eb; /* 10% blue accent */
+    color:white;
+    border-radius:8px;
+    padding:6px 12px;
+    border:none;
+    font-weight:500;
+}
+
+.header button:hover{
+    background:#1d4ed8;
+}
+
+/* FLASH MESSAGE */
+.flash{
+    margin:20px;
+    padding:12px;
+    border-radius:8px;
+    background:#dbeafe; /* soft blue background */
+    color:#1e3a8a; /* dark blue text */
+    font-weight:500;
+}
+
+/* SECTION TITLES */
+.section-title{
+    margin:20px;
+    font-size:20px;
+    font-weight:600;
+    color:#2563eb; /* blue accent */
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>Admin Control Panel</h2>
+
+    <div>
+        🔔 Pending: {{ pending }}
+
+        &nbsp;&nbsp;
+
+        <a href="/create-staff">
+            <button>Create Staff 👨‍💼</button>
+        </a>
+
+        &nbsp;&nbsp;
+
+        <a href="/admin-change-password">
+            <button style="background:#2563eb;">Change Password 🔒</button>
+        </a>
+
+        &nbsp;&nbsp;
+
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</div>
+
+<!-- FLASH MESSAGE -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="flash" id="flashMessage">
+    {{ messages[-1] }}
+</div>
+{% endif %}
+{% endwith %}
+
+<!-- STATS -->
+<div class="stats glass">
+    <div class="stat-box">Total: {{ total }}</div>
+    <div class="stat-box">Approved: {{ approved }}</div>
+    <div class="stat-box">Rejected: {{ rejected }}</div>
+</div>
+
+<!-- CHART -->
+<div class="glass">
+    <canvas id="reportChart"></canvas>
+</div>
+
+<!-- ================= STUDENT REPORTS ================= -->
+<div class="section-title">🎓 Student Reports</div>
+
+<div class="glass">
+<table>
+<tr>
+    <th>ID</th>
+    <th>User</th>
+    <th>Department</th>
+    <th>Role</th>
+    <th>Title</th>
+    <th>Image</th>
+    <th>AI Score</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+
+{% for r in reports if r.Role == "Student" %}
+<tr>
+    <td>{{ r.ReportID }}</td>
+    <td>{{ r.FullName }}</td>
+    <td>{{ r.Department }}</td>
+    <td>{{ r.Role }}</td>
+    <td>{{ r.Title }}</td>
+    <td>
+        {% if r.ImagePath %}
+        <img src="{{ url_for('static', filename='uploads/' + r.ImagePath) }}">
+        {% endif %}
+    </td>
+    <td>{{ r.AI_Score }}%</td>
+    <td>{{ r.Status }}</td>
+    <td>
+        <a href="/approve/{{ r.ReportID }}"><button class="approve">Approve</button></a>
+        <a href="/reject/{{ r.ReportID }}"><button class="reject">Reject</button></a>
+    </td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- ================= STAFF REPORTS ================= -->
+<div class="section-title">👨‍🏫 Staff Reports</div>
+
+<div class="glass">
+<table>
+<tr>
+    <th>ID</th>
+    <th>User</th>
+    <th>Department</th>
+    <th>Role</th>
+    <th>Title</th>
+    <th>Image</th>
+    <th>AI Score</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+
+{% for r in reports if r.Role == "Staff" %}
+<tr>
+    <td>{{ r.ReportID }}</td>
+    <td>{{ r.FullName }}</td>
+    <td>{{ r.Department }}</td>
+    <td>{{ r.Role }}</td>
+    <td>{{ r.Title }}</td>
+    <td>
+        {% if r.ImagePath %}
+        <img src="{{ url_for('static', filename='uploads/' + r.ImagePath) }}">
+        {% endif %}
+    </td>
+    <td>{{ r.AI_Score }}%</td>
+    <td>{{ r.Status }}</td>
+    <td>
+        <a href="/approve/{{ r.ReportID }}"><button class="approve">Approve</button></a>
+        <a href="/reject/{{ r.ReportID }}"><button class="reject">Reject</button></a>
+    </td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<script>
+const ctx = document.getElementById('reportChart');
+new Chart(ctx,{
+    type:'bar',
+    data:{
+        labels:['Total','Approved','Rejected'],
+        datasets:[{
+            label:'Reports',
+            backgroundColor:'#2563eb', /* blue accent */
+            data:[{{ total }},{{ approved }},{{ rejected }}]
+        }]
+    }
+});
+</script>
+
+<script>
+setTimeout(function(){
+    let msg=document.getElementById("flashMessage");
+    if(msg){
+        msg.style.display="none";
+    }
+},4000);
+</script>
+
+</body>
+</html>

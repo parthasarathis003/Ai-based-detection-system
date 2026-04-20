@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Staff Dashboard</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter','Segoe UI',sans-serif;
+}
+
+/* PAGE BACKGROUND */
+
+body{
+
+background: linear-gradient(135deg,#e0f2fe,#f8fafc,#e2e8f0);
+
+color:#0f172a;
+
+min-height:100vh;
+
+}
+
+/* HEADER */
+
+.header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:22px 45px;
+
+background:white;
+
+box-shadow:0 4px 15px rgba(0,0,0,0.05);
+
+}
+
+/* TITLE */
+
+.header h2{
+
+color:#1e3a8a;
+
+}
+
+/* LOGOUT */
+
+.logout{
+
+text-decoration:none;
+
+padding:9px 18px;
+
+border-radius:8px;
+
+background:linear-gradient(135deg,#ef4444,#dc2626);
+
+color:white;
+
+font-size:14px;
+
+font-weight:600;
+
+transition:.25s;
+
+}
+
+.logout:hover{
+
+box-shadow:0 6px 18px rgba(220,38,38,.35);
+
+}
+
+/* MAIN LAYOUT */
+
+.container{
+
+padding:40px;
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+
+gap:30px;
+
+}
+
+/* CARD */
+
+.card{
+
+background:white;
+
+padding:28px;
+
+border-radius:16px;
+
+border:1px solid #e2e8f0;
+
+box-shadow:
+
+0 10px 25px rgba(0,0,0,0.05);
+
+transition:.3s;
+
+}
+
+/* HOVER EFFECT */
+
+.card:hover{
+
+transform:translateY(-5px);
+
+box-shadow:
+
+0 18px 35px rgba(37,99,235,0.15);
+
+}
+
+/* CARD TITLE */
+
+.card h3{
+
+margin-bottom:12px;
+
+color:#1e3a8a;
+
+}
+
+/* CARD TEXT */
+
+.card p{
+
+color:#475569;
+
+font-size:14px;
+
+margin-bottom:20px;
+
+}
+
+/* BUTTON */
+
+.btn{
+
+padding:11px 22px;
+
+border:none;
+
+border-radius:9px;
+
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+color:white;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.btn:hover{
+
+transform:translateY(-1px);
+
+box-shadow:0 8px 20px rgba(37,99,235,0.35);
+
+}
+
+/* STATUS BADGE */
+
+.badge{
+
+display:inline-block;
+
+padding:5px 10px;
+
+border-radius:20px;
+
+font-size:12px;
+
+background:#dcfce7;
+
+color:#166534;
+
+margin-bottom:10px;
+
+}
+
+/* FOOTER */
+
+.footer{
+
+text-align:center;
+
+padding:25px;
+
+font-size:12px;
+
+color:#64748b;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>Staff Dashboard</h2>
+
+<a class="logout" href="/logout">
+
+Logout
+
+</a>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<span class="badge">
+
+AI Active
+
+</span>
+
+<h3>
+
+CCTV Monitoring
+
+</h3>
+
+<p>
+
+AI camera detection system is ready to identify missing persons or objects.
+
+</p>
+
+<button class="btn">
+
+Start Detection
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+Missing Reports
+
+</h3>
+
+<p>
+
+View and manage reports submitted by students or staff members.
+
+</p>
+
+<button class="btn">
+
+View Reports
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+Upload Evidence
+
+</h3>
+
+<p>
+
+Upload images or CCTV footage for AI-based recognition.
+
+</p>
+
+<button class="btn">
+
+Upload File
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+System Status
+
+</h3>
+
+<p>
+
+Monitor AI performance and detection activity logs.
+
+</p>
+
+<button class="btn">
+
+View Logs
+
+</button>
+
+</div>
+
+</div>
+
+<div class="footer">
+
+AI Missing Person System • Smart Surveillance Platform
+
+</div>
+
+</body>
+
+</html>

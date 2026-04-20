@@ -1,0 +1,363 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Missing Person System | Access Portal</title>
+
+<style>
+/* IMPROVED LIGHT MODE TEXT VISIBILITY */
+
+body.light-mode .sub{
+    color:#334155;
+}
+
+body.light-mode #typingText{
+    color:#2563eb;
+    text-shadow:none;
+    font-weight:500;
+}
+
+body.light-mode .title{
+    background: linear-gradient(90deg,#2563eb,#4f46e5,#0891b2);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+body.light-mode .footer{
+    color:#475569;
+}
+
+body.light-mode .panel{
+    background: rgba(255,255,255,0.75);
+    border:1px solid rgba(37,99,235,0.25);
+    box-shadow:0 8px 25px rgba(37,99,235,0.15);
+}
+
+body.light-mode .panel:hover{
+    box-shadow:0 12px 35px rgba(37,99,235,0.25);
+}
+
+/* panel text contrast */
+
+body.light-mode .panel-title{
+    font-weight:600;
+}
+
+body.light-mode .admin{
+    color:#b91c1c;
+}
+
+body.light-mode .user{
+    color:#1e40af;
+}
+
+/* clock color */
+
+body.light-mode #liveClock{
+    color:#1e3a8a;
+    font-weight:600;
+}
+
+/* button glow reduced */
+
+body.light-mode .admin-btn{
+    background: linear-gradient(90deg,#dc2626,#e11d48,#f97316);
+}
+
+body.light-mode .user-btn{
+    background: linear-gradient(90deg,#0284c7,#2563eb,#059669);
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+/* PARTICLE BACKGROUND */
+#particles-js{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background: linear-gradient(135deg, #020617, #030b1c, #020617);
+    z-index:-1;
+    transition:0.5s;
+}
+
+/* LIGHT MODE BACKGROUND */
+body.light-mode #particles-js{
+    background: linear-gradient(135deg, #dbeafe, #eff6ff, #e0f2fe);
+}
+
+/* WRAPPER */
+.wrapper{
+    position:relative;
+    width:1000px;
+    max-width:95%;
+    padding:50px;
+    margin:auto;
+    color:white;
+}
+
+/* HEADER */
+.header{
+    text-align:center;
+    margin-bottom:60px;
+}
+
+.title{
+    font-size:42px;
+    font-weight:700;
+    background: linear-gradient(90deg,#00f7ff,#7c7cff,#00ffa2);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    letter-spacing:2px;
+}
+
+.sub{
+    margin-top:12px;
+    font-size:15px;
+    color:#cbd5f5;
+    letter-spacing:1px;
+}
+
+/* TYPING EFFECT */
+#typingText{
+    font-size:18px;
+    color:#00f7ff;
+    margin-top:15px;
+    height:24px;
+}
+
+/* ACCESS GRID */
+.access-grid{
+    display:grid;
+    grid-template-columns: repeat(2,1fr);
+    gap:50px;
+}
+
+/* PANELS */
+.panel{
+    height:320px;
+    border-radius:28px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 0 60px rgba(0,0,0,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:0.6s;
+}
+
+.panel:hover{
+    transform:translateY(-15px) scale(1.04);
+    box-shadow:0 0 60px rgba(0,255,255,0.5);
+}
+
+.panel-content{
+    text-align:center;
+}
+
+.panel-icon{
+    font-size:70px;
+    margin-bottom:20px;
+}
+
+.panel-title{
+    font-size:26px;
+    letter-spacing:1.5px;
+    margin-bottom:25px;
+}
+
+.panel-btn{
+    padding:14px 45px;
+    border-radius:30px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+    border:none;
+    cursor:pointer;
+    font-size:14px;
+    transition:0.4s;
+}
+
+.admin{ color:#ffb4b4; }
+.admin-btn{
+    background: linear-gradient(90deg,#ff3d3d,#ff0080,#ff9f43);
+    color:white;
+}
+.admin-btn:hover{ transform:scale(1.08); }
+
+.user{ color:#a5f3fc; }
+.user-btn{
+    background: linear-gradient(90deg,#00f5ff,#0066ff,#00ffa2);
+    color:white;
+}
+.user-btn:hover{ transform:scale(1.08); }
+
+/* TOP BAR */
+#topBar{
+    position:fixed;
+    top:20px;
+    right:30px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    z-index:999;
+}
+
+#liveClock{
+    font-size:15px;
+    letter-spacing:2px;
+    color:#00f7ff;
+    font-weight:600;
+    text-shadow:0 0 12px rgba(0,255,255,0.7);
+}
+
+#modeToggle{
+    padding:8px 18px;
+    border-radius:20px;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+    background:linear-gradient(90deg,#00f7ff,#0066ff);
+    color:white;
+    transition:0.3s;
+}
+#modeToggle:hover{ transform:scale(1.08); }
+
+/* PREMIUM LIGHT MODE */
+body.light-mode{
+    color:#0f172a;
+}
+
+body.light-mode .panel{
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(25px);
+    border:1px solid rgba(59,130,246,0.3);
+    box-shadow:0 10px 40px rgba(59,130,246,0.2);
+}
+
+body.light-mode .admin{ color:#b91c1c; }
+body.light-mode .user{ color:#0369a1; }
+body.light-mode #liveClock{ color:#1e3a8a; text-shadow:none; }
+
+/* FOOTER */
+.footer{
+    margin-top:70px;
+    text-align:center;
+    font-size:12px;
+    color:#93c5fd;
+    letter-spacing:2px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="particles-js"></div>
+
+<div class="wrapper">
+
+<div id="topBar">
+    <div id="liveClock"></div>
+    <button id="modeToggle">☀️ Light Mode</button>
+</div>
+
+<div class="header">
+    <div class="title">AI-Based Finding Missing Person & Object Detection System</div>
+    <div class="sub">Next-Generation Artificial Intelligence Surveillance System</div>
+    <div id="typingText"></div>
+</div>
+
+<div class="access-grid">
+
+    <div class="panel">
+        <div class="panel-content">
+            <div class="panel-icon">🛡️</div>
+            <div class="panel-title admin">ADMIN CONTROL</div>
+            <button class="panel-btn admin-btn"
+                    onclick="window.location.href='/admin-login'">
+                SECURE ACCESS
+            </button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-content">
+            <div class="panel-icon">🎓</div>
+            <div class="panel-title user">STUDENT / STAFF PORTAL</div>
+            <button class="panel-btn user-btn"
+                  onclick="window.location.href='/user-login'">
+                ENTER SYSTEM
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    Intelligent Vision Platform • AI Surveillance • Smart Identification System
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+<script>
+particlesJS("particles-js", {
+  particles:{
+    number:{value:80},
+    color:{value:"#00f7ff"},
+    shape:{type:"circle"},
+    opacity:{value:0.5},
+    size:{value:3},
+    line_linked:{
+      enable:true,
+      distance:150,
+      color:"#00f7ff",
+      opacity:0.4,
+      width:1
+    },
+    move:{enable:true,speed:3}
+  }
+});
+</script>
+
+<script>
+function updateClock(){
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    document.getElementById("liveClock").innerText = timeString;
+}
+setInterval(updateClock,1000);
+updateClock();
+</script>
+
+<script>
+const toggleBtn = document.getElementById("modeToggle");
+toggleBtn.addEventListener("click", function(){
+    document.body.classList.toggle("light-mode");
+    if(document.body.classList.contains("light-mode")){
+        toggleBtn.innerText = "🌙 Dark Mode";
+    }else{
+        toggleBtn.innerText = "☀️ Light Mode";
+    }
+});
+</script>
+
+<script>
+const text = "AI Face Recognition • Object Detection • Smart Surveillance";
+let index = 0;
+function typeEffect(){
+    if(index < text.length){
+        document.getElementById("typingText").innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeEffect,50);
+    }
+}
+typeEffect();
+</script>
+
+</body>
+</html>

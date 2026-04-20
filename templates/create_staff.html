@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Staff | Admin Panel</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+/* GANGA BACKGROUND (70% GREY) */
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#d1d5db; /* 70% grey */
+    color:#1e293b; /* dark grey text */
+}
+
+/* CARD (20% WHITE) */
+.container{
+    background:#ffffff; /* 20% white */
+    width:400px;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.container h2{
+    text-align:center;
+    margin-bottom:25px;
+    color:#1e293b;
+    font-weight:600;
+}
+
+/* INPUTS */
+.input-group{
+    margin-bottom:18px;
+}
+
+.input-group input{
+    width:100%;
+    padding:12px;
+    border-radius:6px;
+    border:1px solid #9ca3af; /* subtle grey border */
+    font-size:15px;
+    color:#1e293b;
+    background:#f9fafb;
+}
+
+input::placeholder{
+    color:#6b7280; /* medium grey placeholder */
+}
+
+/* ERROR */
+.error{
+    color:#dc2626;
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* BUTTON (10% BLUE) */
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:#2563eb; /* blue accent */
+    color:white;
+    font-size:16px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:background 0.3s ease;
+    font-weight:600;
+}
+
+button:hover{
+    background:#1d4ed8; /* darker blue on hover */
+}
+
+/* FLASH MESSAGE */
+.flash{
+    background:#dbeafe; /* soft blue background */
+    color:#1e3a8a; /* dark blue text */
+    padding:10px;
+    border-radius:6px;
+    margin-bottom:15px;
+    font-size:14px;
+    font-weight:500;
+}
+
+/* TOGGLE ICON */
+#toggleIcon{
+    position:absolute;
+    right:12px;
+    top:12px;
+    cursor:pointer;
+    color:#2563eb; /* blue accent */
+    font-size:16px;
+}
+</style>
+
+<script>
+function validateForm(){
+    let name=document.getElementById("name").value.trim();
+    let email=document.getElementById("email").value.trim();
+    let password=document.getElementById("password").value.trim();
+
+    let namePattern=/^[A-Za-z ]+$/;
+    let emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let passwordPattern=/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    document.getElementById("nameError").innerHTML="";
+    document.getElementById("emailError").innerHTML="";
+    document.getElementById("passError").innerHTML="";
+
+    let valid=true;
+
+    if(!namePattern.test(name)){
+        document.getElementById("nameError").innerHTML="Name should contain only letters";
+        valid=false;
+    }
+
+    if(!emailPattern.test(email)){
+        document.getElementById("emailError").innerHTML="Enter valid email address";
+        valid=false;
+    }
+
+    if(!passwordPattern.test(password)){
+        document.getElementById("passError").innerHTML="Password must be strong";
+        valid=false;
+    }
+
+    return valid;
+}
+
+function togglePassword(){
+    let password=document.getElementById("password");
+    let icon=document.getElementById("toggleIcon");
+
+    if(password.type==="password"){
+        password.type="text";
+        icon.innerHTML="🙈";
+    }else{
+        password.type="password";
+        icon.innerHTML="👁";
+    }
+}
+</script>
+</head>
+
+<body>
+<div class="container">
+    <h2>Create Staff Account</h2>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash" id="flashMessage">
+        {{ messages[-1] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form method="post" onsubmit="return validateForm()">
+        <div class="input-group">
+            <input type="text" id="name" name="name" placeholder="Staff Name" required>
+            <div id="nameError" class="error"></div>
+        </div>
+
+        <div class="input-group">
+            <input type="email" id="email" name="email" placeholder="Staff Email" required>
+            <div id="emailError" class="error"></div>
+        </div>
+
+        <div class="input-group" style="position:relative;">
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <span id="toggleIcon" onclick="togglePassword()">👁</span>
+            <div id="passError" class="error"></div>
+        </div>
+
+        <button type="submit">Create Staff</button>
+    </form>
+</div>
+
+<script>
+setTimeout(function(){
+    let msg=document.getElementById("flashMessage");
+    if(msg){
+        msg.style.display="none";
+    }
+},4000);
+</script>
+</body>
+</html>

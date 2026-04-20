@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+/* SAME STYLE AS YOUR FILE */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+display:flex;
+background:#f1f5f9;
+}
+
+.sidebar{
+width:230px;
+height:100vh;
+background:white;
+box-shadow:2px 0 10px rgba(0,0,0,0.08);
+padding-top:20px;
+position:fixed;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:30px;
+color:#f97316;
+}
+
+.sidebar a{
+display:block;
+padding:12px 25px;
+color:#334155;
+text-decoration:none;
+font-size:15px;
+}
+
+.sidebar a:hover{
+background:#f97316;
+color:white;
+border-radius:6px;
+margin:0 10px;
+}
+
+.main{
+margin-left:230px;
+width:100%;
+}
+
+.header{
+background:#f97316;
+color:white;
+padding:15px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.header-actions{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.pending{
+font-weight:500;
+margin-right:10px;
+}
+
+/* BUTTON STYLE */
+
+.btn{
+text-decoration:none;
+padding:8px 14px;
+border-radius:6px;
+font-size:14px;
+font-weight:500;
+transition:0.3s;
+}
+.flash{
+position:fixed;
+top:20px;
+right:20px;
+background:#dcfce7;
+color:#166534;
+padding:12px 20px;
+border-radius:8px;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+font-weight:500;
+z-index:999;
+animation:slideIn 0.4s ease;
+}
+
+@keyframes slideIn{
+from{
+transform:translateX(100%);
+opacity:0;
+}
+to{
+transform:translateX(0);
+opacity:1;
+}
+}
+/* CHANGE PASSWORD BUTTON */
+
+.change{
+background:white;
+color:#f97316;
+border:2px solid white;
+}
+
+.change:hover{
+background:#fed7aa;
+}
+
+/* LOGOUT BUTTON */
+
+.logout{
+background:#dc2626;
+color:white;
+}
+
+.logout:hover{
+background:#b91c1c;
+}
+
+.cards{
+display:flex;
+gap:20px;
+padding:20px;
+}
+
+.card{
+flex:1;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+text-align:center;
+}
+
+.card p{
+font-size:24px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.chart-box{
+background:white;
+margin:20px;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>AI Admin</h2>
+
+<a href="/admin-dashboard">Dashboard</a>
+<a href="/students">Students</a>
+<a href="/staff">Staff</a>
+<a href="/pending-reports">Pending Reports</a>
+<a href="/approved-reports">Approved Reports</a>
+<a href="/rejected-reports">Rejected Reports</a>
+<a href="/create-staff">Create Staff</a>
+
+</div>
+
+<div class="main">
+
+<div class="header">
+
+<h2>Admin Dashboard</h2>
+
+
+<div class="header-actions">
+
+<span class="pending">Pending : {{ pending }}</span>
+
+<a href="/admin-change-password" class="btn change">Change Password</a>
+
+<a href="/logout" class="btn logout">Logout</a>
+
+</div>
+
+</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div id="flashMessage" class="flash">
+    {% for category, message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Reports</h3>
+<p>{{ total }}</p>
+</div>
+
+<div class="card">
+<h3>Approved</h3>
+<p>{{ approved }}</p>
+</div>
+
+<div class="card">
+<h3>Rejected</h3>
+<p>{{ rejected }}</p>
+</div>
+
+</div>
+
+<div class="chart-box">
+<canvas id="reportChart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+const ctx=document.getElementById('reportChart');
+
+new Chart(ctx,{
+type:'bar',
+data:{
+labels:['Total','Approved','Rejected'],
+datasets:[{
+label:'Reports',
+backgroundColor:'#f97316',
+data:[{{ total }},{{ approved }},{{ rejected }}]
+}]
+}
+});
+
+</script>
+
+<script>
+setTimeout(function(){
+    let msg=document.getElementById("flashMessage");
+    if(msg){
+        msg.style.display="none";
+    }
+},5000);
+</script>
+
+</body>
+</html>

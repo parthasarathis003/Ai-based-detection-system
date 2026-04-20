@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Missing Person System - Login</title>
+
+<style>
+/* -------- GLOBAL -------- */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+/* -------- GANGA BACKGROUND (70% GREY) -------- */
+body{
+    min-height:100vh;
+    background:#d1d5db; /* grey base */
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+/* -------- LOGIN BOX (20% WHITE) -------- */
+.box{
+    position:relative;
+    z-index:2;
+    width:380px;
+    padding:35px;
+    border-radius:16px;
+    background:#ffffff; /* white card */
+    box-shadow:0 0 25px rgba(0,0,0,0.15);
+    border:1px solid #e5e7eb;
+    text-align:center;
+    color:#1e293b; /* dark grey text */
+}
+
+/* -------- TITLE -------- */
+.box h2{
+    color:#2563eb; /* 10% blue accent */
+    margin-bottom:8px;
+    letter-spacing:1px;
+    font-weight:600;
+}
+
+.subtitle{
+    color:#475569; /* medium grey */
+    font-size:13px;
+    margin-bottom:25px;
+}
+
+/* -------- INPUT -------- */
+.box input,.box select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #9ca3af;
+    background:#f9fafb;
+    color:#1e293b;
+    outline:none;
+    transition:0.3s;
+    font-size:14px;
+}
+
+.box input::placeholder{
+    color:#6b7280;
+}
+
+.box input:focus,.box select:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 8px rgba(37,99,235,0.4);
+}
+
+/* -------- PASSWORD BOX -------- */
+.password-box{
+    position:relative;
+}
+
+.password-box input{
+    padding-right:45px;
+}
+
+.toggle-icon{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:18px;
+    color:#2563eb; /* blue accent */
+    user-select:none;
+}
+
+/* -------- BUTTON (10% BLUE) -------- */
+.box button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    letter-spacing:1px;
+    color:white;
+    background:#2563eb;
+    cursor:pointer;
+    transition:0.3s;
+    position:relative;
+    overflow:hidden;
+}
+
+.box button:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+    box-shadow:0 0 12px rgba(37,99,235,0.5);
+}
+
+/* -------- LINKS -------- */
+.box p{
+    margin-top:18px;
+    color:#475569;
+    font-size:13px;
+}
+
+.box a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.box a:hover{
+    text-decoration:underline;
+}
+
+/* -------- AI TAG -------- */
+.ai-tag{
+    font-size:11px;
+    color:#6b7280;
+    margin-top:10px;
+    letter-spacing:1px;
+}
+
+/* -------- SHAKE ANIMATION -------- */
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-8px);}
+    50%{transform:translateX(8px);}
+    75%{transform:translateX(-8px);}
+    100%{transform:translateX(0);}
+}
+
+.shake{
+    animation:shake 0.4s;
+}
+</style>
+</head>
+
+<body>
+<div class="box" id="login-box">
+    <h2>AI Missing Person System</h2>
+    <div class="subtitle">Computer Vision • Surveillance • Object Detection</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    {% if category == "user_error" or category == "user_success" %}
+    <div id="flash-message"
+        data-type="{{category}}"
+        style="
+        padding:10px;
+        margin-bottom:15px;
+        border-radius:8px;
+        font-size:13px;
+        background:#dbeafe;
+        color:{% if 'error' in category %}#dc2626{% else %}#2563eb{% endif %};
+        font-weight:500;">
+        {{message}}
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form action="/user-login" method="post">
+        <input type="email" name="email" placeholder="NECxxxxxxx@nttf.co.in" value="{{email}}" required>
+
+        <div class="password-box">
+            <input type="password" id="password" name="password" placeholder="Password" value="{{password}}" required>
+            
+        </div>
+
+        <label style="color:#475569;font-size:13px;">Select Role</label>
+        <select name="role" required>
+            <option value="">-- Select Role --</option>
+            <option value="Student">Student 🎓</option>
+            <option value="Staff">Staff 🧑‍💼</option>
+        </select>
+
+        <button type="submit">SECURE LOGIN</button>
+
+        <p><a href="/forgot-password">Forgot Password?</a></p>
+        <p>Don't have account? <a href="/register">Register</a></p>
+    </form>
+
+    <div class="ai-tag">AI Powered Identification Platform</div>
+</div>
+
+<script>
+/* PASSWORD SHOW/HIDE */
+function togglePassword(){
+    const pwd=document.getElementById("password");
+    const icon=document.querySelector(".toggle-icon");
+
+   
+}
+</script>
+
+<script>
+/* AUTO HIDE FLASH MESSAGE */
+setTimeout(function(){
+    let msg=document.getElementById("flash-message");
+    if(msg){
+        msg.style.transition="opacity 0.5s";
+        msg.style.opacity="0";
+        setTimeout(function(){
+            msg.style.display="none";
+        },500);
+    }
+},5000);
+</script>
+<script>
+let msg = document.querySelector(".flash");
+
+if(msg){
+    let type = msg.className;
+    if(type.includes("error")){
+        let box = document.querySelector(".box");
+        box.style.animation = "shake 0.4s";
+    }
+}
+</script>
+
+</body>
+</html>
