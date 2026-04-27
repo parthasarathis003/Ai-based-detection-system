@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Videos (too large)
+static/cctv_videos/
+
+# Generated images
+static/matched_frames/
+
+# Uploaded files
+static/uploads/
+
+# Optional
+.env
+*.log
