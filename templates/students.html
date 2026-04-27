@@ -1,17 +1,14 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 <title>Students Management</title>
 
 <style>
-
 body{
 font-family:'Segoe UI',sans-serif;
 background:linear-gradient(135deg,#e0f2fe,#f8fafc,#e2e8f0);
 padding:40px;
 }
-
-/* CONTAINER */
 
 .container{
 background:white;
@@ -24,8 +21,6 @@ h2{
 color:#1e3a8a;
 margin-bottom:20px;
 }
-
-/* TABLE */
 
 table{
 width:100%;
@@ -47,8 +42,6 @@ tr:hover{
 background:#f1f5f9;
 }
 
-/* BUTTON */
-
 .btn{
 padding:8px 15px;
 border:none;
@@ -58,30 +51,20 @@ font-size:13px;
 font-weight:600;
 }
 
-.accept{
-background:#22c55e;
-color:white;
-}
-
-.process{
-background:#3b82f6;
-color:white;
-}
-
-/* IMAGE */
+.accept{ background:#22c55e; color:white; }
+.process{ background:#3b82f6; color:white; }
+.reject{ background:#ef4444; color:white; }
 
 .preview{
 width:70px;
 border-radius:8px;
 cursor:pointer;
-transition:.2s;
 }
 
-.preview:hover{
-transform:scale(1.05);
-}
-
-/* POPUP IMAGE MODAL */
+.pending{ color:#d97706; font-weight:600; }
+.approved{ color:#16a34a; font-weight:600; }
+.processing{ color:#2563eb; font-weight:600; }
+.rejected{ color:#dc2626; font-weight:600; }
 
 .modal{
 display:none;
@@ -111,104 +94,116 @@ font-size:35px;
 cursor:pointer;
 }
 
+.empty{
+text-align:center;
+padding:20px;
+color:#64748b;
+font-weight:500;
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-
 <h2>Student Reports</h2>
 
 <table>
-
 <tr>
-<th>Report ID</th>
-<th>Student Name</th>
+<th>ID</th>
+<th>Name</th>
 <th>Title</th>
 <th>Image</th>
 <th>Status</th>
 <th>Action</th>
 </tr>
 
-{% for r in reports %}
+{% if reports|length == 0 %}
+<tr>
+<td colspan="6" class="empty">No Reports Found</td>
+</tr>
 
+{% else %}
+{% for r in reports %}
 <tr>
 
 <td>{{ r.ReportID }}</td>
-
 <td>{{ r.FullName }}</td>
-
 <td>{{ r.Title }}</td>
 
 <td>
-
 {% if r.ImagePath %}
-
-<img
-src="{{ url_for('static', filename='uploads/' + r.ImagePath) }}"
+<img src="{{ url_for('static', filename='uploads/' + r.ImagePath) }}"
 class="preview"
-onclick="showImage(this.src)"
->
+onclick="showImage(this.src)">
+{% else %}
+No Image
+{% endif %}
+</td>
 
+<td class="{{ (r.Status or '').strip().lower() }}">
+{{ r.Status }}
+</td>
+
+<td>
+
+<!-- ✅ PENDING -->
+{% if r.Status.lower() == "pending" %}
+
+<a href="/approve/{{ r.ReportID }}" onclick="return confirm('Approve?')">
+<button type="button" class="btn accept">Accept</button>
+</a>
+
+<form action="/process/{{ r.ReportID }}" method="POST" style="display:inline;">
+<button type="submit" class="btn process" onclick="return confirm('Move to Processing?')">Process</button>
+</form>
+
+<form action="/reject/{{ r.ReportID }}" method="POST" style="display:inline;">
+<button type="submit" class="btn reject" onclick="return confirm('Reject?')">Reject</button>
+</form>
+
+<!-- ✅ PROCESSING -->
+{% elif r.Status == "Processing" %}
+
+<a href="/approve/{{ r.ReportID }}" onclick="return confirm('Approve?')">
+<button type="button" class="btn accept">Accept</button>
+</a>
+
+<form action="/reject/{{ r.ReportID }}" method="POST" style="display:inline;">
+<button type="submit" class="btn reject" onclick="return confirm('Reject?')">Reject</button>
+</form>
+
+<!-- ✅ COMPLETED -->
 {% else %}
 
-No Image
+<span style="color:gray;font-weight:600;">Completed</span>
 
 {% endif %}
 
 </td>
 
-<td>{{ r.Status }}</td>
-
-<td>
-
-<a href="/approve/{{ r.ReportID }}">
-<button class="btn accept">Accept</button>
-</a>
-
-<a href="/process/{{ r.ReportID }}">
-<button class="btn process">Process</button>
-</a>
-
-</td>
-
 </tr>
-
 {% endfor %}
+{% endif %}
 
 </table>
-
 </div>
 
-
-<!-- IMAGE POPUP -->
-
+<!-- IMAGE MODAL -->
 <div id="imgModal" class="modal">
-
 <span class="close" onclick="closeImage()">&times;</span>
-
 <img class="modal-content" id="modalImg">
-
 </div>
-
 
 <script>
-
 function showImage(src){
-
 document.getElementById("imgModal").style.display="block";
-
 document.getElementById("modalImg").src=src;
-
 }
 
 function closeImage(){
-
 document.getElementById("imgModal").style.display="none";
-
 }
-
 </script>
 
 </body>

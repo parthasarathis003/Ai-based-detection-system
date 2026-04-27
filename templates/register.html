@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -261,6 +261,47 @@ text-align:left;
 
 }
 
+/* TOKEN ERROR */
+
+.token-error{
+
+display:none;
+
+background:#fff1f2;
+
+border:1px solid #fca5a5;
+
+padding:10px 12px;
+
+border-radius:8px;
+
+color:#b91c1c;
+
+font-size:13px;
+
+text-align:left;
+
+margin-top:-4px;
+margin-bottom:4px;
+
+}
+
+.token-hint{
+
+font-size:12px;
+
+color:#94a3b8;
+
+text-align:left;
+
+margin-top:-6px;
+
+margin-bottom:6px;
+
+padding-left:2px;
+
+}
+
 /* AI TAG */
 
 .ai-tag{
@@ -315,7 +356,7 @@ Create Secure Account
 {% endif %}
 {% endwith %}
 
-<form action="/register" method="post">
+<form action="/register" method="post" onsubmit="return validateForm()">
 
 <input
 type="text"
@@ -330,8 +371,17 @@ type="text"
 id="token"
 name="token"
 placeholder="Token Number (ex: NEC0923009)"
-onkeyup="autoFillDetails()"
+oninput="autoFillDetails()"
+maxlength="10"
 required>
+
+<!-- Error message shown when token is invalid -->
+<div class="token-error" id="token-error">
+  ⚠️ Invalid format! Token must be: <strong>NEC</strong> + 2-digit course + 2-digit year + 3-digit roll<br>
+  Example: <strong>NEC0923001</strong>
+</div>
+
+<div class="token-hint" id="token-hint">Format: NEC + Course(2) + Year(2) + Roll(3) &nbsp;|&nbsp; e.g. NEC0923001</div>
 
 <input
 type="email"
@@ -359,8 +409,6 @@ id="password"
 name="password"
 placeholder="Password"
 required>
-
-
 
 </div>
 
@@ -395,31 +443,80 @@ AI Powered Registration
 <script>
 
 function togglePassword(){
-
-let pwd=document.getElementById("password");
-
-pwd.type=pwd.type==="password"?"text":"password";
-
+  let pwd = document.getElementById("password");
+  pwd.type = pwd.type === "password" ? "text" : "password";
 }
 
-function autoFillDetails(){
+function autoFillDetails() {
+  let token      = document.getElementById("token").value.trim();
+  let tokenInput = document.getElementById("token");
+  let errorMsg   = document.getElementById("token-error");
+  let hintMsg    = document.getElementById("token-hint");
 
-let token=document.getElementById("token").value;
+  // Clear auto-filled fields first
+  document.getElementById("email").value      = "";
+  document.getElementById("department").value = "";
 
-document.getElementById("email").value=token?token+"@nttf.co.in":"";
+  // Empty field — reset styles
+  if (token === "") {
+    resetTokenStyle(tokenInput, errorMsg, hintMsg);
+    return;
+  }
 
-if(token.length>=5){
+  /*
+   * Token format: NEC (case-insensitive) + 2-digit course + 2-digit year + 3-digit roll
+   * Total length = 10 characters
+   * Examples: NEC0923001, nec0923001, NEC1223099
+   */
+  const tokenRegex = /^[Nn][Ee][Cc]\d{2}\d{2}\d{3}$/;
 
-let deptCode=token.substring(3,5);
+  if (!tokenRegex.test(token)) {
+    // Invalid — show red border + error message
+    tokenInput.style.borderColor  = "#ef4444";
+    tokenInput.style.boxShadow    = "0 0 0 3px rgba(239,68,68,0.15)";
+    tokenInput.style.background   = "#fff5f5";
+    errorMsg.style.display        = "block";
+    hintMsg.style.display         = "none";
+    return;
+  }
 
-document.getElementById("department").value="CP"+deptCode;
+  // Valid token — show green border, hide error
+  tokenInput.style.borderColor  = "#22c55e";
+  tokenInput.style.boxShadow    = "0 0 0 3px rgba(34,197,94,0.15)";
+  tokenInput.style.background   = "#f0fdf4";
+  errorMsg.style.display        = "none";
+  hintMsg.style.display         = "none";
 
+  // Auto-fill email (always uppercase NEC)
+  let upperToken = token.toUpperCase();
+  document.getElementById("email").value = upperToken + "@nttf.co.in";
+
+  // Extract course code (positions 3–4) and fill department
+  let courseCode = token.substring(3, 5);   // e.g. "09"
+  document.getElementById("department").value = "CP" + courseCode;
 }
 
+function resetTokenStyle(tokenInput, errorMsg, hintMsg) {
+  tokenInput.style.borderColor = "#cbd5e1";
+  tokenInput.style.boxShadow   = "none";
+  tokenInput.style.background  = "#f8fafc";
+  errorMsg.style.display       = "none";
+  hintMsg.style.display        = "block";
+}
+
+function validateForm() {
+  let token = document.getElementById("token").value.trim();
+  const tokenRegex = /^[Nn][Ee][Cc]\d{2}\d{2}\d{3}$/;
+
+  if (!tokenRegex.test(token)) {
+    document.getElementById("token-error").style.display = "block";
+    document.getElementById("token").focus();
+    return false;   // Block form submission
+  }
+  return true;
 }
 
 </script>
 
 </body>
-
 </html>

@@ -6,6 +6,8 @@ from flask_mail import Mail, Message
 from flask import get_flashed_messages
 from datetime import datetime
 from deepface import DeepFace
+import threading
+from ai_engine import run_ai_for_report
 
 import os
 import random
@@ -57,6 +59,12 @@ def detect_faces(image_path):
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
     return len(faces)
+
+
+@app.after_request
+def add_header(response):
+    response.cache_control.no_store = True
+    return response
 
 
 # =====================
@@ -494,9 +502,7 @@ def admin_dashboard():
 
     return redirect('/admin-login')
 
-# =====================
-# STUDENTS LIST
-# =====================
+
 # =====================
 # STUDENTS LIST
 # =====================
@@ -640,21 +646,24 @@ def approved_reports():
 # PROCESS
 # =====================
 
-@app.route('/process/<int:id>')
-def process(id):
+@app.route('/process/<int:report_id>', methods=['POST'])
+def process_report(report_id):
+
+    if 'role' not in session or session['role'] != "Admin":
+        return redirect('/admin-login')
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute(
         "UPDATE Reports SET Status='Processing' WHERE ReportID=?",
-        (id,)
+        (report_id,)
     )
 
     conn.commit()
     conn.close()
 
-    return redirect('/admin-dashboard')
+    return redirect('/students')
 
 
 # =====================
@@ -769,9 +778,10 @@ def student_dashboard():
         cursor = conn.cursor()
 
         # GET USER NAME
-        cursor.execute("SELECT FullName FROM Users WHERE UserID=?", (session['user_id'],))
+        cursor.execute("SELECT FullName, Email FROM Users WHERE UserID=?", (session['user_id'],))
         user = cursor.fetchone()
         username = user[0]
+        user_email = user[1]
 
         # GET REPORTS
         cursor.execute("""
@@ -782,7 +792,6 @@ def student_dashboard():
         """, (session['user_id'],))
 
         rows = cursor.fetchall()
-        conn.close()
 
         reports = []
         for row in rows:
@@ -794,10 +803,32 @@ def student_dashboard():
                 "Time": row[4]
             })
 
+        # =====================
+        # FIX 1 — GET ALERTS for this user from DB
+        # =====================
+        cursor.execute("""
+            SELECT AlertID, AlertMessage, Status
+            FROM Alerts
+            WHERE SentTo = ?
+            ORDER BY AlertID DESC
+        """, (user_email,))
+
+        alert_rows = cursor.fetchall()
+        conn.close()
+
+        alerts = []
+        for row in alert_rows:
+            alerts.append({
+                "AlertID":  row[0],
+                "Message":  row[1],
+                "Status":   row[2]
+            })
+
         return render_template(
             'student_dashboard.html',
             reports=reports,
-            username=username
+            username=username,
+            alerts=alerts
         )
 
     return redirect('/user-login')
@@ -815,34 +846,51 @@ def staff_dashboard():
 
 
 
-@app.route('/approve/<int:report_id>')
-def approve(report_id):
+
+@app.route('/approve/<int:id>', methods=['GET'])
+def approve(id):
+    if 'role' not in session or session['role'] != 'Admin':
+        return redirect('/admin-login')
+
+    # Mark as Processing first
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE Reports SET Status='Processing' WHERE ReportID=?", (id,)
+    )
+    conn.commit()
+    conn.close()
+
+    # Run AI in background (so admin page doesn't freeze)
+    thread = threading.Thread(target=run_ai_for_report, args=(id,))
+    thread.daemon = True
+    thread.start()
+
+    flash(f"Report #{id} approved ✅ — AI is now processing...")
+    return redirect('/admin-dashboard')
+
+# =====================
+# reject button
+# =====================
+
+@app.route('/reject/<int:report_id>', methods=['POST'])
+def reject(report_id):
+
+    if 'role' not in session or session['role'] != "Admin":
+        return redirect('/admin-login')
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # get uploaded image
-    cursor.execute("SELECT ImagePath FROM Reports WHERE ReportID=?", (report_id,))
-    report = cursor.fetchone()
-
-    image_path = report[0]
-
-    match_face, score = compare_face(image_path)
-
-    if match_face:
-        result = "MATCH FOUND"
-    else:
-        result = "NO MATCH"
-
-    cursor.execute("""
-        UPDATE Reports
-        SET Status='Approved', AIResult=?, Score=?
-        WHERE ReportID=?
-    """, (result, score, report_id))
+    cursor.execute(
+        "UPDATE Reports SET Status='Rejected' WHERE ReportID=?",
+        (report_id,)
+    )
 
     conn.commit()
+    conn.close()
 
-    return redirect('/admin-dashboard')
+    return redirect('/students')
 
 
 # =====================
@@ -879,6 +927,7 @@ def submit_report():
             face_count = detect_faces(filepath)
 
             print("Faces Detected:", face_count)
+            print("Saved filename:", filename)
 
             # Run AI matching
             ai_score = ai_face_match(filepath)

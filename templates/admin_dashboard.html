@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 <title>Admin Dashboard</title>
@@ -6,7 +6,6 @@
 
 <style>
 
-/* SAME STYLE AS YOUR FILE */
 *{
 margin:0;
 padding:0;
@@ -62,6 +61,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 }
+
 .header-actions{
 display:flex;
 align-items:center;
@@ -73,8 +73,6 @@ font-weight:500;
 margin-right:10px;
 }
 
-/* BUTTON STYLE */
-
 .btn{
 text-decoration:none;
 padding:8px 14px;
@@ -83,31 +81,6 @@ font-size:14px;
 font-weight:500;
 transition:0.3s;
 }
-.flash{
-position:fixed;
-top:20px;
-right:20px;
-background:#dcfce7;
-color:#166534;
-padding:12px 20px;
-border-radius:8px;
-box-shadow:0 4px 10px rgba(0,0,0,0.15);
-font-weight:500;
-z-index:999;
-animation:slideIn 0.4s ease;
-}
-
-@keyframes slideIn{
-from{
-transform:translateX(100%);
-opacity:0;
-}
-to{
-transform:translateX(0);
-opacity:1;
-}
-}
-/* CHANGE PASSWORD BUTTON */
 
 .change{
 background:white;
@@ -118,8 +91,6 @@ border:2px solid white;
 .change:hover{
 background:#fed7aa;
 }
-
-/* LOGOUT BUTTON */
 
 .logout{
 background:#dc2626;
@@ -159,6 +130,43 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
+table{
+width:95%;
+margin:20px;
+border-collapse:collapse;
+background:white;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #e2e8f0;
+text-align:center;
+font-size:14px;
+}
+
+th{
+background:#f97316;
+color:white;
+}
+
+img{
+border-radius:6px;
+}
+
+.flash{
+position:fixed;
+top:20px;
+right:20px;
+background:#dcfce7;
+color:#166534;
+padding:12px 20px;
+border-radius:8px;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+font-weight:500;
+z-index:999;
+}
+
 </style>
 </head>
 
@@ -184,7 +192,6 @@ box-shadow:0 4px 12px rgba(0,0,0,0.08);
 
 <h2>Admin Dashboard</h2>
 
-
 <div class="header-actions">
 
 <span class="pending">Pending : {{ pending }}</span>
@@ -196,12 +203,13 @@ box-shadow:0 4px 12px rgba(0,0,0,0.08);
 </div>
 
 </div>
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 <div id="flashMessage" class="flash">
-    {% for category, message in messages %}
-        {{ message }}
-    {% endfor %}
+{% for category, message in messages %}
+{{ message }}
+{% endfor %}
 </div>
 {% endif %}
 {% endwith %}
@@ -226,8 +234,67 @@ box-shadow:0 4px 12px rgba(0,0,0,0.08);
 </div>
 
 <div class="chart-box">
+
 <canvas id="reportChart"></canvas>
+
 </div>
+
+<!-- RECENT REPORTS TABLE -->
+
+<h3 style="margin-left:20px;">Recent Reports</h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Department</th>
+<th>Role</th>
+<th>Title</th>
+<th>Location</th>
+<th>Status</th>
+<th>Image</th>
+<th>AI Score</th>
+<th>Faces Detected</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for report in reports %}
+
+<tr>
+
+<td>{{ report.ReportID }}</td>
+<td>{{ report.FullName }}</td>
+<td>{{ report.Department }}</td>
+<td>{{ report.Role }}</td>
+<td>{{ report.Title }}</td>
+<td>{{ report.Location }}</td>
+<td>{{ report.Status }}</td>
+
+<td>
+{% if report.ImagePath %}
+<img src="{{ url_for('static', filename='uploads/' ~ report.ImagePath) }}" width="60">
+{% else %}
+No Image
+{% endif %}
+</td>
+
+<td>{{ report.AI_Score }}</td>
+
+<td>{{ report.FacesDetected }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
 
 </div>
 
@@ -238,11 +305,11 @@ const ctx=document.getElementById('reportChart');
 new Chart(ctx,{
 type:'bar',
 data:{
-labels:['Total','Approved','Rejected'],
+labels:['Total','Approved','Rejected','Pending'],
 datasets:[{
 label:'Reports',
 backgroundColor:'#f97316',
-data:[{{ total }},{{ approved }},{{ rejected }}]
+data:[{{ total }},{{ approved }},{{ rejected }},{{ pending }}]
 }]
 }
 });
@@ -250,12 +317,14 @@ data:[{{ total }},{{ approved }},{{ rejected }}]
 </script>
 
 <script>
+
 setTimeout(function(){
-    let msg=document.getElementById("flashMessage");
-    if(msg){
-        msg.style.display="none";
-    }
+let msg=document.getElementById("flashMessage");
+if(msg){
+msg.style.display="none";
+}
 },5000);
+
 </script>
 
 </body>
